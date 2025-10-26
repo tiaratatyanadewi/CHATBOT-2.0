@@ -47,8 +47,9 @@ Follow these steps to get the system running locally:
 ### 4. Project Structure
 
 ```bash
-cs_chatbot/
+CHATBOT-2.0/
 ├─ chatbot_app.py      # Streamlit frontend
+├─ README.md           # README file
 ├─ main.py             # FastAPI backend
 ├─ schema.sql          # MySQL database schema
 ├─ .env                # Environment variables
