@@ -43,3 +43,13 @@ Follow these steps to get the system running locally:
     streamlit run chatbot_app.py
     ```
     *(Access UI at: http://localhost:8501)*
+
+### 4. Project Structure
+
+```bash
+cs_chatbot/
+├─ chatbot_app.py      # Streamlit frontend
+├─ main.py             # FastAPI backend
+├─ schema.sql          # MySQL database schema
+├─ .env                # Environment variables
+└─ requirements.txt    # Python dependencies
