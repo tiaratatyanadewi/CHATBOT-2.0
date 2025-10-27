@@ -18,7 +18,7 @@ Follow these steps to get the system running locally:
 
 ### 1. Prerequisites
 
-* Python $\ge 3.9$
+* Python $\ge 3.9$ (current version: Python 3.13.9)
 * MySQL $\ge 8$
 
 ### 2. Setup Database & Environment
