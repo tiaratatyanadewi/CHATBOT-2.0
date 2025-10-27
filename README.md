@@ -5,8 +5,8 @@ A complete **Customer Service Chatbot System** built for efficient delivery sche
 ## ✨ Features
 
 * **🌐 Frontend:** Interactive UI built with **Streamlit**.
-* **⚙️ Backend:** Robust RESTful API using **FastAPI** for data handling.
-* **💾 Database:** Persistent storage for customer and delivery data using **MySQL**.
+* **⚙️ Backend:** RESTful API using **FastAPI** for data handling.
+* **💾 Database:** Storage for customer and delivery data using **MySQL**.
 * **🧠 AI Core:** Conversational assistance powered by **OpenAI GPT-4o-mini**.
 * **🔐 Admin Dashboard:** View, export, and manage customer records.
 
@@ -18,7 +18,7 @@ Follow these steps to get the system running locally:
 
 ### 1. Prerequisites
 
-* Python $\ge 3.9$
+* Python $\ge 3.9$ (current version: Python 3.13.9)
 * MySQL $\ge 8$
 
 ### 2. Setup Database & Environment
