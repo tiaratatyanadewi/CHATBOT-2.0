@@ -168,6 +168,37 @@ def get_all_customers():
         return get_customers_from_db()
 
 
+def delete_customer_by_id(customer_id):
+    """Hapus 1 data customer berdasarkan ID"""
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM customers WHERE id = %s", (customer_id,))
+        conn.commit()
+        st.success(f"✅ Data dengan ID {customer_id} berhasil dihapus.")
+    except Error as err:
+        st.error(f"❌ Gagal menghapus data ID {customer_id}: {err}")
+    finally:
+        if conn and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+def delete_all_customers():
+    """Hapus semua data di tabel customers"""
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM customers")
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return True
+    except Error as err:
+        st.error(f"❌ Gagal menghapus semua data: {err}")
+        return False
+
+
 if not st.session_state.authenticated:
     st.title("🏢 Customer Service System")
     st.write("Selamat datang! Silakan pilih role Anda:")
@@ -224,21 +255,61 @@ if st.session_state.role == "admin":
     with tab1:
         st.write("### Data Semua Customer")
 
-        col_refresh, col_source = st.columns([1, 3])
-        with col_refresh:
+        col1, col2, col3 = st.columns([1, 1, 2])
+
+        with col1:
             if st.button("🔄 Refresh Data"):
                 st.rerun()
+
+        with col2:
+            if "confirm_delete_all" not in st.session_state:
+                st.session_state.confirm_delete_all = False
+
+            delete_clicked = st.button("🧹 Delete ALL Data")
+
+            if delete_clicked:
+                st.session_state.confirm_delete_all = True
+
+            if st.session_state.confirm_delete_all:
+                st.warning(
+                    "⚠️ Yakin mau hapus **SEMUA DATA CUSTOMER**? Aksi ini tidak bisa dibatalkan."
+                )
+                col_confirm1, col_confirm2 = st.columns(2)
+                with col_confirm1:
+                    if st.button("✅ YA, Hapus Semua Data"):
+                        if delete_all_customers():
+                            st.session_state.confirm_delete_all = False
+                            st.success("🧹 Semua data berhasil dihapus!")
+                            st.rerun()
+                with col_confirm2:
+                    if st.button("❌ Batal"):
+                        st.session_state.confirm_delete_all = False
+                        st.rerun()
 
         with st.spinner("Mengambil data dari database..."):
             customers = get_customers_from_db()
 
         if customers:
             df = pd.DataFrame(customers)
-
             st.success(f"✅ Data berhasil diambil dari MySQL Database")
 
-            st.dataframe(df, width="stretch", height=400)
+            st.write(f"Total data: **{len(df)}** customer")
 
+            for i, row in df.iterrows():
+                col1, col2, col3, col4 = st.columns([1, 2, 3, 1])
+                with col1:
+                    st.write(f"**ID:** {row['id']}")
+                with col2:
+                    st.write(row["name"])
+                with col3:
+                    st.write(row["phone"])
+                with col4:
+                    if st.button("🗑 Delete", key=f"delete_{row['id']}"):
+                        delete_customer_by_id(row["id"])
+                        st.rerun()
+
+            # === Tombol download CSV ===
+            st.markdown("---")
             csv = df.to_csv(index=False).encode("utf-8")
             st.download_button(
                 label="📥 Download Data (CSV)",
@@ -247,7 +318,6 @@ if st.session_state.role == "admin":
                 mime="text/csv",
             )
 
-            st.success(f"Total customer: **{len(customers)}** orang")
         else:
             st.warning(
                 "⚠️ Belum ada data customer atau gagal mengambil data dari database."
